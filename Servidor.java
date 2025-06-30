@@ -6,15 +6,15 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-// ... imports permanecem os mesmos ...
-
 public class Servidor {
     static List<Aluno> alunos = new ArrayList<>();
     static List<Livro> livros = new ArrayList<>();
     static List<Emprestimo> emprestimos = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        String portEnv = System.getenv("PORT");
+        int port = (portEnv != null) ? Integer.parseInt(portEnv) : 8080;
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         server.createContext("/", exchange -> servirArquivo(exchange, "index.html"));
         server.createContext("/cadastraraluno.html", exchange -> servirArquivo(exchange, "cadastraraluno.html"));
@@ -32,7 +32,7 @@ public class Servidor {
         server.createContext("/devolver-livro", Servidor::registrarDevolucao);
 
         server.setExecutor(null);
-        System.out.println("Servidor rodando em http://localhost:8080");
+        System.out.println("Servidor rodando em http://localhost:" + port);
         server.start();
     }
 
@@ -199,32 +199,4 @@ public class Servidor {
     static class Aluno {
         String nome, matricula, turma;
         Aluno(String nome, String matricula, String turma) {
-            this.nome = nome;
-            this.matricula = matricula;
-            this.turma = turma;
-        }
-    }
-
-    static class Livro {
-        String titulo, autor;
-        int quantidade;
-        Livro(String titulo, String autor, int quantidade) {
-            this.titulo = titulo;
-            this.autor = autor;
-            this.quantidade = quantidade;
-        }
-    }
-
-    static class Emprestimo {
-        String matricula, titulo;
-        Date dataEmprestimo, dataDevolucao;
-        boolean devolvido;
-        Emprestimo(String matricula, String titulo, Date dataEmprestimo, Date dataDevolucao, boolean devolvido) {
-            this.matricula = matricula;
-            this.titulo = titulo;
-            this.dataEmprestimo = dataEmprestimo;
-            this.dataDevolucao = dataDevolucao;
-            this.devolvido = devolvido;
-        }
-    }
-}
+           
